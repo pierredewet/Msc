@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+ <!--    {% block nav_content %}
+    {% endblock%}
+
+    {% block side_bar %}
+     -->
+    <div class="col-md-3 sidebar no-gutters" id="sidebar" style="background-color:#424242">
+      <div class="rounded" style="color:#FFF">
+        <h3 align="center" style="color:#FFA500" >{{postcodes|length}} POSTCODES FOUND</h3>
+        <h5 align="center">matching your query</h5>
+      </div>
+      <div style="color:#FFF">
+      <form action="{{ url_for('myhood') }}" method="post" id="postcodelist">
+                <table class="table">
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Postcode</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                 {% for result in postcodes %}
+                      <tr>
+                        <td>[{{ loop.index }}]</td>
+                        <td><button type="submit" name="postcode" id="postcode" value="{{result[0]}}" class="btn-link">{{result[0]}}</button></td>
+                      </tr>
+                {% endfor %}
+                    </tbody>
+                  </table>
+      </form>
+      </div>
+    </div>
+    <!-- {% endblock %} -->
+
+    {% block core_body %}
+    <div class="col-md-9 content col-md-offset-3 no-gutters pull-right" id="corebody" style="background-color:#616161">
+
+        <div id="map" style="height:700px; width=100%"></div>
+     </div>
+
+    {% endblock %}
+
+    {% block local_scripts %}
+      <script type="text/javascript">
+
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+        });
+
+        var bounds = new google.maps.LatLngBounds();
+        var latlng;
+        {% for result in postcodes %}
+          latlng = new google.maps.LatLng({{result[1]}}, {{result[2]}});
+          bounds.extend(latlng);
+          setMarkers(map, {{result[1]}}, {{result[2]}}, "{{result[0]}}", "{{ loop.index }}");
+        {% endfor %}
+        map.fitBounds(bounds);
+      }
+
+      function setMarkers(map, lat, lng, code, idx) {
+          marker = new google.maps.Marker({
+            position: {lat:lat, lng: lng},
+            map: map,
+            title: code,
+            label: { text: idx },
+            animation: google.maps.Animation.DROP
+          });
+      }
+
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCC_HU_ttPeHhDdpEbA4WUnaYAj_OSZ7YU&callback=initMap">
+      </script>
+    {% endblock %}

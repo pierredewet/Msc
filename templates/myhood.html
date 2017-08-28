@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="MSc Thesis">
+    <meta name="author" content="Pierre de Wet">
+    <link rel="icon" href="../../favicon.ico">
+    <title>W1515130 Prototype</title>
+    <link  rel='stylesheet' href="{{ url_for('static', filename='css/bootstrap.css') }}" />
+    <link  rel='stylesheet' href="{{ url_for('static', filename='css/starter-template.css') }}" />
+    <link  rel='stylesheet' href="{{ url_for('static', filename='css/font-awesome.min.css') }}" />
+    <!-- <link  rel='stylesheet' href="{{ url_for('static', filename='css/custom.styles.css') }}" /> -->
+    <style>
+   #rcorners2 {
+    border-radius: 99px;
+    border: 5px solid #73AD21;
+    padding: 10px;
+    width: 150px;
+    height: 150px;
+    font-weight: bold;
+    }
+
+    .round-button {
+        width: 10%;
+        height: 0;
+        padding-bottom: 10%;
+        border-radius: 35%;
+        border: 2px solid #f5f5f5;
+        overflow: hidden;
+        background: #464646;
+        /*background-color: #f78585;*/
+
+        box-shadow: 0 0 3px gray;
+        float: left;
+        margin-right: 10px;
+        margin-left: 10px;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+    .round-button:hover {
+        background: #262626;
+    }
+    .round-button img {
+        display: block;
+        width: 80%;
+        margin-left: 6px;
+        margin-top: 9px;
+        padding: 10%;
+        height: auto;
+    }
+
+    .red {
+      background-color: #f78585;
+    }
+    .red:hover {
+      background: rgba(242, 0, 0, 1);
+    }
+
+    .orange {
+      background-color: rgba(242, 205, 96, 1);
+    }
+    .orange:hover {
+      background: rgba(242, 181, 0, 1);
+    }
+    .yellow {
+      background-color: rgba(242, 232, 99, 1);
+    }
+    .yellow:hover {
+      background: rgba(242, 226, 0, 1);
+    }
+    .green {
+      background-color: rgba(0, 232, 158, 1);
+    }
+    .green:hover {
+      background: rgba(0, 232, 88, 1);
+    }
+    .blue {
+      background-color: rgba(87, 85, 204, 1);
+    }
+    .blue:hover {
+      background: rgba(3, 0, 204, 1);
+    }
+
+    .panel-body {
+      max-height: 350px;
+      min-height: 350px;
+      overflow-y: scroll;
+    }
+
+    h1 {
+      margin-left: 50px;
+      margin-top: 20px;
+    }
+    h4 {
+      margin-left: 50px;
+    }
+
+    .pdisplay {
+      margin-bottom: 50px;
+    }
+    </style>
+
+  </head>
+
+    <body style="background-color: #000">
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="{{ url_for('index') }}">W1515130 Prototype</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+          <form class="navbar-form navbar-right" id="postcodelookup" action="{{ url_for('myhood') }}" method="post">
+            <input class="form-control mr-sm-0" type="text" placeholder="Search for postcode" aria-label="Search Postcode" id="postcode" name="postcode">
+            <button class="btn btn-outline-success my-sm-3" type="submit">Lookup</button>
+          </form>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    <div class="container-fluid" id="mainbody" style="background-color:#424242">
+      <div class="row"> <!-- Button Row! -->
+       <div class="col-xs-9 col-sm-6">
+          <h1 class="display-2"><font color="#FFA500">
+            {{ core_dets.code }}
+          </font></h1>
+          <h4 class="text-muted" style="color:#FAFAFA">Area details for the postcode</h4>
+        </div>
+        <div class="col-xs-9 col-sm-6">
+          {% if deprivation is not none %}
+            {% if deprivation.income_decile > 8 %}
+              <div class="round-button blue" data-container="body" title="Income Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Income decile for this postcode is: {{deprivation.income_decile}} (Where
+              10 is the highest).
+              ">
+            {% elif deprivation.income_decile > 6 %}
+              <div class="round-button green" data-container="body" title="Income Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Income decile for this postcode is: {{deprivation.income_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.income_decile > 4 %}
+              <div class="round-button yellow" data-container="body" title="Income Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Income decile for this postcode is: {{deprivation.income_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.income_decile > 2 %}
+              <div class="round-button orange" data-container="body" title="Income Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Income decile for this postcode is: {{deprivation.income_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% else %}
+              <div class="round-button red" data-container="body" title="Income Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Income decile for this postcode is: {{deprivation.income_decile}} (Where
+              10 is the highest).
+              ">
+            {% endif %}
+              <a href="#" data-toggle="tooltip" title="Income decile is {{deprivation.income_decile}}">
+                  <img src="{{ url_for('static', filename='images/income.svg') }}" alt="Income decile" />
+              </a>
+          </div>
+            {% if deprivation.employment_decile > 8 %}
+              <div class="round-button blue" data-container="body" title="Employment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Employment decile for this postcode is: {{deprivation.employment_decile}} (Where
+              10 is the highest).
+              ">
+            {% elif deprivation.employment_decile > 6 %}
+              <div class="round-button green" data-container="body" title="Employment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Employment decile for this postcode is: {{deprivation.employment_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.employment_decile > 4 %}
+              <div class="round-button yellow" data-container="body" title="Employment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Employment decile for this postcode is: {{deprivation.employment_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.employment_decile > 2 %}
+              <div class="round-button orange" data-container="body" title="Employment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Employment decile for this postcode is: {{deprivation.employment_decile}} (Where
+              10 is the highest).
+              ">
+            {% else %}
+              <div class="round-button red" data-container="body" title="Employment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Employment decile for this postcode is: {{deprivation.employment_decile}} (Where
+              10 is the highest).
+              ">
+            {% endif %}
+              <a href="#">
+                  <img src="{{ url_for('static', filename='images/employment.svg') }}" alt="Employment decile" />
+              </a>
+          </div>
+            {% if deprivation.education_decile > 8 %}
+              <div class="round-button blue" data-container="body" title="Education Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Education decile for this postcode is: {{deprivation.education_decile}} (Where
+              10 is the highest).
+              ">
+            {% elif deprivation.education_decile > 6 %}
+              <div class="round-button green" data-container="body" title="Education Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Education decile for this postcode is: {{deprivation.education_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.education_decile > 4 %}
+              <div class="round-button yellow" data-container="body" title="Education Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Education decile for this postcode is: {{deprivation.education_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.education_decile > 2 %}
+              <div class="round-button orange" data-container="body" title="Education Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Education decile for this postcode is: {{deprivation.education_decile}} (Where
+              10 is the highest).
+              ">
+            {% else %}
+              <div class="round-button red" data-container="body" title="Education Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Education decile for this postcode is: {{deprivation.education_decile}} (Where
+              10 is the highest).
+              ">
+            {% endif %}
+              <a href="#">
+                  <img src="{{ url_for('static', filename='images/education.svg') }}" alt="Education decile" />
+              </a>
+          </div>
+            {% if deprivation.health_decile > 8 %}
+              <div class="round-button blue" data-container="body" title="Health Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Health decile for this postcode is: {{deprivation.health_decile}} (Where
+              10 is the highest).
+              ">
+            {% elif deprivation.health_decile > 6 %}
+              <div class="round-button green" data-container="body" title="Health Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Health decile for this postcode is: {{deprivation.health_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.health_decile > 4 %}
+              <div class="round-button yellow" data-container="body" title="Health Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Health decile for this postcode is: {{deprivation.health_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.health_decile > 2 %}
+              <div class="round-button orange" data-container="body" title="Health Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Health decile for this postcode is: {{deprivation.health_decile}} (Where
+              10 is the highest).
+              ">
+            {% else %}
+              <div class="round-button red" data-container="body" title="Health Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Health decile for this postcode is: {{deprivation.health_decile}} (Where
+              10 is the highest).
+              ">
+            {% endif %}
+              <a href="#">
+                  <img src="{{ url_for('static', filename='images/health.svg') }}" alt="Health decile" />
+              </a>
+          </div>
+            {% if deprivation.crime_decile > 8 %}
+              <div class="round-button blue" data-container="body" title="Crime Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Crime decile for this postcode is: {{deprivation.crime_decile}} (Where
+              10 is the highest).
+              ">
+            {% elif deprivation.crime_decile > 6 %}
+              <div class="round-button green" data-container="body" title="Crime Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Crime decile for this postcode is: {{deprivation.crime_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.crime_decile > 4 %}
+              <div class="round-button yellow" data-container="body" title="Crime Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Crime decile for this postcode is: {{deprivation.crime_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.crime_decile > 2 %}
+              <div class="round-button orange" data-container="body" title="Crime Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Crime decile for this postcode is: {{deprivation.crime_decile}} (Where
+              10 is the highest).
+              ">
+            {% else %}
+              <div class="round-button red" data-container="body" title="Crime Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Crime decile for this postcode is: {{deprivation.crime_decile}} (Where
+              10 is the highest).
+              ">
+            {% endif %}
+              <a href="#">
+                  <img src="{{ url_for('static', filename='images/crime.svg') }}" alt="Crime decile" />
+              </a>
+          </div>
+            {% if deprivation.barriers_decile > 8 %}
+              <div class="round-button blue" data-container="body" title="Barriers to Services Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Barriers decile for this postcode is: {{deprivation.barriers_decile}} (Where
+              10 is the highest).
+              ">
+            {% elif deprivation.barriers_decile > 6 %}
+              <div class="round-button green" data-container="body" title="Barriers to Services Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Barriers decile for this postcode is: {{deprivation.barriers_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.barriers_decile > 4 %}
+              <div class="round-button yellow" data-container="body" title="Barriers to Services Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Barriers decile for this postcode is: {{deprivation.barriers_decile}} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.barriers_decile > 2 %}
+              <div class="round-button orange" data-container="body" title="Barriers to Services Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Barriers decile for this postcode is: {{deprivation.barriers_decile}} (Where
+              10 is the highest).
+              ">
+            {% else %}
+              <div class="round-button red" data-container="body" title="Barriers to Services Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The Barriers decile for this postcode is: {{deprivation.barriers_decile}} (Where
+              10 is the highest).
+              ">
+            {% endif %}
+              <a href="#">
+                  <img src="{{ url_for('static', filename='images/barriers.svg') }}" alt="Barriers to services decile" />
+              </a>
+          </div>
+            {% if deprivation.environment_decile > 8 %}
+              <div class="round-button blue" data-container="body" title="Environment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The environmental decile for this postcode is: {{ deprivation.environment_decile }} (Where
+              10 is the highest).
+              ">
+            {% elif deprivation.environment_decile > 6 %}
+              <div class="round-button green" data-container="body" title="Environment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The environmental decile for this postcode is: {{ deprivation.environment_decile }} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.environment_decile > 4 %}
+              <div class="round-button yellow" data-container="body" title="Environment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The environmental decile for this postcode is: {{ deprivation.environment_decile }} (Where
+              10 is the highest).
+              ">
+
+            {% elif deprivation.environment_decile > 2 %}
+              <div class="round-button orange" data-container="body" title="Environment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The environmental decile for this postcode is: {{ deprivation.environment_decile }} (Where
+              10 is the highest).
+              ">
+            {% else %}
+              <div class="round-button red" data-container="body" title="Environment Deprivation" data-toggle="popover" data-placement="left"
+              data-content="The environmental decile for this postcode is: {{ deprivation.environment_decile }} (Where
+              10 is the highest).
+              ">
+            {% endif %}
+              <a href="#">
+                  <img src="{{ url_for('static', filename='images/environment.svg') }}" alt="Environment decile" />
+              </a>
+          </div>
+          {% endif %} <!-- Don't print any buttons if no deprivation records -->
+        </div>
+      </div> <!-- END button row -->
+      <div class="row"> <!-- ROW 1 -->
+        <div class="col-xs-6 col-sm-4"> <!-- Column 1 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-education" aria-hidden="true"></span>
+              Schools
+            </div>
+            <div class="panel-body">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Phase</th>
+                    <th>Name</th>
+                    <th>Gender</th>
+                    <th>Religious</th>
+                    <th>Ofsted ranking</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td data-container="body" data-html="true" title="{{ nurserydata.establishment_name }}" data-toggle="popover" data-placement="right"
+                        data-content="
+                            <table class='table table-hover'>
+                              <tbody>
+                                <tr>
+                                  <td>URL:</td>
+                                  <td><a href='{{ nurserydata.website }}'>{{ nurserydata.website }}</a></td>
+                                </tr>
+                                <tr>
+                                  <td>Tel:</td>
+                                  <td>{{ nurserydata.tel }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Head teacher</td>
+                                  <td>{{ nurserydata.head_teacher }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Address:</td>
+                                  <td>{{ nurserydata.street }},<br />
+                                      {{ nurserydata.town }},<br />
+                                      {{ nurserydata.postcode }}</address><br /></td>
+                                </tr>
+                                <tr>
+                                  <td>Religious:</td>
+                                  <td>{{ nurserydata.religious }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        ">Nursery</td>
+                    <td>{{ nurserydata.establishment_name }}</td>
+                    <td>{{ nurserydata.gender }}</td>
+                    <td>{{ nurserydata.religious }}</td>
+                    <td>
+                        <a href="{{ nurserydata.url }}">
+
+                        {% for i in range(5 - nurserydata .ranking) %}
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        {% endfor %}
+                        </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-container="body" data-html="true" title="{{ primarydata.establishment_name }}" data-toggle="popover" data-placement="right"
+                        data-content="
+                            <table class='table table-hover'>
+                              <tbody>
+                                <tr>
+                                  <td>URL:</td>
+                                  <td><a href='{{ primarydata.website }}'>{{ primarydata.website }}</a></td>
+                                </tr>
+                                <tr>
+                                  <td>Tel:</td>
+                                  <td>{{ primarydata.tel }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Head teacher</td>
+                                  <td>{{ primarydata.head_teacher }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Address:</td>
+                                  <td>{{ primarydata.street }},<br />
+                                      {{ primarydata.town }},<br />
+                                      {{ primarydata.postcode }}</address><br /></td>
+                                </tr>
+                                <tr>
+                                  <td>Religious:</td>
+                                  <td>{{ primarydata.religious }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        "
+                    >Primary</td>
+                    <td>{{ primarydata.establishment_name }}</td>
+                    <td>{{ primarydata.gender }}</td>
+                    <td>{{ primarydata.religious }}</td>
+                    <td>
+                        <a href="{{ primarydata.url }}">
+                        {% for i in range(5 - primarydata.ranking) %}
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        {% endfor %}
+                        </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td data-container="body" data-html="true" title="{{ secondarydata.establishment_name }}" data-toggle="popover" data-placement="right"
+                        data-content="
+                            <table class='table table-hover'>
+                              <tbody>
+                                <tr>
+                                  <td>URL:</td>
+                                  <td><a href='{{ secondarydata.website }}'>{{ secondarydata.website }}</a></td>
+                                </tr>
+                                <tr>
+                                  <td>Tel:</td>
+                                  <td>{{ secondarydata.tel }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Head teacher</td>
+                                  <td>{{ secondarydata.head_teacher }}</td>
+                                </tr>
+                                <tr>
+                                  <td>Address:</td>
+                                  <td>{{ secondarydata.street }},<br />
+                                      {{ secondarydata.town }},<br />
+                                      {{ secondarydata.postcode }}</address><br /></td>
+                                </tr>
+                                <tr>
+                                  <td>Religious:</td>
+                                  <td>{{ secondarydata.religious }}</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                        "
+                    >Secondary</td>
+                    <td>{{ secondarydata.establishment_name }}</td>
+                    <td>{{ secondarydata.gender }}</td>
+                    <td>{{ secondarydata.religious }}</td>
+                    <td>
+                        <a href="{{ secondarydata.url }}">
+
+                        {% for i in range(5 - secondarydata.ranking) %}
+                        <span class="glyphicon glyphicon-star" aria-hidden="true"></span>
+                        {% endfor %}
+                        </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td colspan=5><em>* Schools that are listed as "Not applicable" may appear in more than one phase.</em></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-6 col-sm-4"> <!-- Column 2 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+            <span class="glyphicon glyphicon-globe" aria-hidden="true"></span>
+            Location
+            </div>
+            <div class="panel-body" id="pcode-map" style="height: 370px;">
+              <div id="map-legend" height="200px" align="right"></div>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-6 col-sm-4"> <!-- Column 3 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+              Property prices over time
+            </div>
+            <div class="panel-body">
+              <canvas id="property-price-chart" height="250px"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row"> <!-- ROW 2 -->
+        <div class="col-xs-6 col-sm-4">  <!-- Column 1 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+              Population
+            </div>
+            <div class="panel-body">
+              <h2 align="center">Total population: {{ pop.tot_pop }}</h2>
+              <canvas id="myChart" height="100px"></canvas>
+              <canvas id="ringChart" height="100px"></canvas>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-6 col-sm-4"> <!-- Column 2 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-alert" aria-hidden="true"></span>
+              Crime in the area
+            </div>
+            <div class="panel-body">
+                        {% if crimedata is not none %}
+                <p align="center">{{ crimedata.total|int }} incidents this month (
+                {% if crimedata.total > crimedata.theft_average + crimedata.asb_average + crimedata.serious_crime_average %}
+                          <img src="{{ url_for('static', filename='images/uptrend.svg') }}" alt="Higher crime this period" />
+                          {% elif crimedata.total == crimedata.theft_average + crimedata.asb_average + crimedata.serious_crime_average %}
+                           <img src="{{ url_for('static', filename='images/flattrend.svg') }}" alt="Flat trend this period" />
+                          {% else %}
+                           <img src="{{ url_for('static', filename='images/downtrend.svg') }}" alt="Down trend this period" />
+                          {% endif %}
+                trend for the period vs the borough average of {{ crimedata.theft_average + crimedata.asb_average + crimedata.serious_crime_average }})</p>
+              <canvas id="CrimeChart" height="200px"></canvas>
+
+              {% else %}
+              <p>There is no current crime data for this area</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-6 col-sm-4"> <!-- Column 3 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+              Property prices (Table)
+            </div>
+            <div class="panel-body">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Year</th>
+                    <th>UK Average</th>
+                    <th>Postcode average</th>
+                    <th>Outcode average</th>
+                  </tr>
+                </thead>
+                <tbody>
+                    {% for line in propertydata %}
+                  <tr>
+                    <td>{{ line.year| int }}</td>
+                    <td>{{ line.total_avg}}</td>
+                    <td>{{ line.postcode_avg | int}}</td>
+                    <td>{{ line.outcode_avg}}</td>
+                  </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row"> <!-- ROW 3 -->
+        <div class="col-xs-6 col-sm-4"> <!-- Column 1 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-heart" aria-hidden="true"></span>
+              Directions to nearest GP: {{ gpdata.name|title }} {{ gpdata.postcode}}
+            </div>
+            <div class="panel-body" id="gp-directions" style="height: 350px;">
+            </div>
+          </div>
+        </div>
+        <!-- Replace start -->
+        <div class="col-xs-6 col-sm-4">  <!-- Column 1 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-film" aria-hidden="true"></span>
+              Directions to nearest dentist: {{ dentist.addr2|title }} {{ dentist.postcode }}
+              ({% if dentist.subtype|string() is equalto "D" %}
+                NHS
+               {% else %}
+                Private
+               {% endif %}
+              )
+            </div>
+            <div class="panel-body" id="dentist-directions" style="height: 350px;">
+            </div>
+          </div>
+        </div>
+        <!-- Replace end -->
+        <div class="col-xs-6 col-sm-4"> <!-- Column 3 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-road" aria-hidden="true"></span>
+              Directions to {{ transport.station_name }} station (Zones: {{ transport.zones }})
+            </div>
+            <div class="panel-body" id="rail-directions" style="height: 350px;">
+              {{ transport.Distance | round | int }}
+              {{ transport.lat }}
+              {{ transport.lng }}
+            </div>
+          </div>
+        </div>
+      </div>
+<!-- ROW 4 -->
+      <div class="row">
+      <!--  NEW replace -->
+        <div class="col-xs-6 col-sm-4"> <!-- Column 2 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-tree-deciduous" aria-hidden="true"></span>
+              Environmental details
+            </div>
+            <div class="panel-body">
+            <h2 align="center" class="pdisplay display-2">Green space: {{core_dets.green_space_pc}}%</h2>
+               <div class="panel-group"> <!-- BEGIN FOLDABLE SECTION -->
+{% for mainkey in pollution %}
+ {% for key, value in pollution[mainkey].items() %}
+               <!-- NO2 Pollution -->
+               {% if key == "@NO2" %}
+                {% if value|int < 51 %}
+                <div class="panel panel-success">
+                {% else %}
+                <div class="panel panel-warning">
+                {% endif %}
+                  <div class="panel-heading">
+                    <h5 class="panel-title">
+                      {% if value|int < 51 %}
+                        <img src="{{ url_for('static', filename='images/happy.svg') }}" alt="NO2 levels ok" />
+                      {% else %}
+                        <img src="{{ url_for('static', filename='images/sad.svg') }}" alt="NO2 levels bad" />
+                      {% endif %}
+                      <a data-toggle="collapse" href="#collapse1">NO2 (Nitrogen dioxide)</a>
+                      : {{ value }}
+                    </h5>
+                  </div>
+                  <div id="collapse1" class="panel-collapse collapse">
+                    <div class="panel-body"><p>
+                        <strong>NO2</strong> is produced when fossil fuels (coal, natural
+                        gas and so on) are burned. When a pollutant
+                        is released directly into the atmosphere it is known
+                        as an emission.</p>
+                        <p>The main effect of breathing in raised levels of nitrogen dioxide is the increased likelihood of respiratory problems. Nitrogen dioxide inflames the lining of the lungs, and it can reduce immunity to lung infections. This can cause problems such as wheezing, coughing, colds, flu and bronchitis.</p><p>Increased levels of nitrogen dioxide can have significant impacts on people with asthma because it can cause more frequent and more intense attacks. Children with asthma and older people with heart disease are most at risk.</p>
+                        <a href="https://uk-air.defra.gov.uk/assets/documents/reports/aqeg/nd-summary.pdf">
+                        read more from defra</a>
+                    </div>
+                  </div>
+                </div>
+               {% endif %}
+                <!-- O3 Pollution -->
+               {% if key == "@O3" %}
+                {% if value|int < 100 %}
+                <div class="panel panel-success">
+                {% else %}
+                <div class="panel panel-warning">
+                {% endif %}
+                  <div class="panel-heading">
+                    <h5 class="panel-title">
+                      {% if value|int < 100 %}
+                        <img src="{{ url_for('static', filename='images/happy.svg') }}" alt="O3 levels ok" />
+                      {% else %}
+                        <img src="{{ url_for('static', filename='images/sad.svg') }}" alt="O3 levels bad" />
+                      {% endif %}
+                      <a data-toggle="collapse" href="#collapse2">O3 (Ozone)</a>
+                      : {{ value }}
+                    </h5>
+                  </div>
+                  <div id="collapse2" class="panel-collapse collapse">
+                    <div class="panel-body"><p>
+                      Ozone in the air we breathe can harm our health. People most at risk from breathing air containing ozone include people with asthma, children, older adults, and people who are active outdoors, especially outdoor workers. In addition, people with certain genetic characteristics, and people with reduced intake of certain nutrients, such as vitamins C and E, are at greater risk from ozone exposure.</p>
+                      <p>Breathing ozone can trigger a variety of health problems including chest pain, coughing, throat irritation, and airway inflammation. It also can reduce lung function and harm lung tissue. Ozone can worsen bronchitis, emphysema, and asthma, leading to increased medical care.</p>
+                      <a href="https://uk-air.defra.gov.uk/assets/documents/reports/aqeg/aqeg-ozone-report.pdf">
+                      read more about ozone from Defra</a>
+                    </div>
+                  </div>
+                </div>
+               {% endif %}
+               <!-- PM10 pollution @PM10_Index -->
+               {% if key == "@PM10_Index" %}
+                {% if value|int < 4 %}
+                <div class="panel panel-success">
+                {% else %}
+                <div class="panel panel-warning">
+                {% endif %}
+                  <div class="panel-heading">
+                    <h5 class="panel-title">
+                      {% if value|int < 4 %}
+                        <img src="{{ url_for('static', filename='images/happy.svg') }}" alt="O3 levels ok" />
+                      {% else %}
+                        <img src="{{ url_for('static', filename='images/sad.svg') }}" alt="O3 levels bad" />
+                      {% endif %}
+                      <a data-toggle="collapse" href="#collapse3">PM10 (Particulate matter < 10&micro;m in size)</a>
+                      : {{ value }}
+                    </h5>
+                  </div>
+                  <div id="collapse3" class="panel-collapse collapse">
+                    <div class="panel-body"><p>
+                      <a href="https://uk-air.defra.gov.uk/assets/documents/reports/aqeg/pm-summary.pdf">Airborne particulate matter</a> is made up of a collection of solid and/or liquid materials
+                      of various sizes that range from a few nanometres in diameter (about the size of a virus) to around 100 micrometres (100 μm, about the thickness of a human hair). It consists of both primary
+                      components, which are released directly from the source into the atmosphere, and secondary
+                      components, which are formed in the atmosphere by chemical reactions.<p>
+                      <p>Particulate matter comes from both human-made and natural sources. It contains a range of chemical compounds and the identity of these compounds provides clues to its origin </p>
+                      <a href="https://uk-air.defra.gov.uk/air-pollution/daqi?view=more-info&pollutant=pm10">
+                      read more about the daily air quality index</a>
+                    </div>
+                  </div>
+                </div>
+               {% endif %}
+               <!-- PM25 Pollution -->
+               {% if key == "@PM25_Index" %}
+                {% if value|int < 4 %}
+                <div class="panel panel-success">
+                {% else %}
+                <div class="panel panel-warning">
+                {% endif %}
+                  <div class="panel-heading">
+                    <h5 class="panel-title">
+                      {% if value|int < 4 %}
+                        <img src="{{ url_for('static', filename='images/happy.svg') }}" alt="O3 levels ok" />
+                      {% else %}
+                        <img src="{{ url_for('static', filename='images/sad.svg') }}" alt="O3 levels bad" />
+                      {% endif %}
+                      <a data-toggle="collapse" href="#collapse4">PM25 (Particulate matter < 2.5&micro;m in size)</a>
+                      : {{ value }}
+                    </h5>
+                  </div>
+                  <div id="collapse4" class="panel-collapse collapse">
+                    <div class="panel-body"><p>
+                      <a href="https://uk-air.defra.gov.uk/assets/documents/reports/aqeg/pm-summary.pdf">Airborne particulate matter</a> is made up of a collection of solid and/or liquid materials
+                      of various sizes that range from a few nanometres in diameter (about the size of a virus) to around 100 micrometres (100 μm, about the thickness of a human hair). It consists of both primary
+                      components, which are released directly from the source into the atmosphere, and secondary
+                      components, which are formed in the atmosphere by chemical reactions.<p>
+                      <p>Particulate matter comes from both human-made and natural sources. It contains a range of chemical compounds and the identity of these compounds provides clues to its origin </p>
+                      <a href="https://uk-air.defra.gov.uk/air-pollution/daqi?view=more-info&pollutant=pm10">
+                      read more about the daily air quality index</a>
+                    </div>
+                  </div>
+                </div>
+               {% endif %}
+
+  {% endfor %}
+{% endfor %}
+              </div> <!-- END FOLDABLE SECTION -->
+            </div>
+          </div>
+        </div>
+<!-- NEW REPACE -->
+        <div class="col-xs-6 col-sm-4"> <!-- Column 2 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-gbp" aria-hidden="true"></span>
+              Area poverty
+            </div>
+            <div class="panel-body">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Description</th>
+                    <th>Percentage</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Percentage of Households Below 60% of the Median Income; (after housing costs)</td>
+                    <td><strong>{{ poverty.household_pov }}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Percentage of Households Below 60% of the Median Income; (after housing costs); 95% Confidence Interval Lower Limit</td>
+                    <td><strong>{{ poverty.household_pov_95_lower }}</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Percentage of Households Below 60% of the Median Income; (after housing costs); 95% Confidence Interval Upper Limit</td>
+                    <td><strong>{{ poverty.household_pov_95_upper }}</strong></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="col-xs-6 col-sm-4"> <!-- Column 3 -->
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <span class="glyphicon glyphicon-signal" aria-hidden="true"></span>
+              Index of Multiple deprivation overview
+            </div>
+            <div class="panel-body">
+            <canvas id="deprivation-radar" height="220px"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+<!-- END ROW 4 -->
+    </div>
+  <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/tether.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
+  <script>
+  $(function () {
+    $('[data-toggle="popover"]').popover()
+  })
+  </script>
+    <script>
+    function drawmaps() {
+      trainMap();
+      dentistMap();
+      gpMap();
+      initMap();
+    }
+
+    function trainMap() {
+      var start = new google.maps.LatLng({{ core_dets.lat }},{{ core_dets.lng }});
+      var end = new google.maps.LatLng({{ transport.lat }},{{ transport.lng }});
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        var map = new google.maps.Map(document.getElementById('rail-directions'), {
+          zoom: 10,
+          center: {lat: {{ core_dets.lat }}, lng: {{ core_dets.lng }}}
+        });
+
+        var latlngbounds = new google.maps.LatLngBounds();
+        latlngbounds.extend(start);
+        latlngbounds.extend(end);
+        map.fitBounds(latlngbounds);
+
+        directionsDisplay.setMap(map);
+
+        calculateAndDisplayRoute(directionsService, directionsDisplay, start, end);
+      }
+
+    function dentistMap() {
+      var start = new google.maps.LatLng({{ core_dets.lat }},{{ core_dets.lng }});
+      var end = new google.maps.LatLng({{ dentist.lat }},{{ dentist.lng }});
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        var map = new google.maps.Map(document.getElementById('dentist-directions'), {
+          zoom: 10,
+          center: {lat: {{ core_dets.lat }}, lng: {{ core_dets.lng }}}
+        });
+
+        var latlngbounds = new google.maps.LatLngBounds();
+        latlngbounds.extend(start);
+        latlngbounds.extend(end);
+        map.fitBounds(latlngbounds);
+
+        directionsDisplay.setMap(map);
+
+        calculateAndDisplayRoute(directionsService, directionsDisplay, start, end);
+      }
+
+
+    function gpMap() {
+      var start = new google.maps.LatLng({{ core_dets.lat }},{{ core_dets.lng }});
+      var end = new google.maps.LatLng({{ gpdata.lat }},{{ gpdata.lng }});
+        var directionsService = new google.maps.DirectionsService;
+        var directionsDisplay = new google.maps.DirectionsRenderer;
+        var map = new google.maps.Map(document.getElementById('gp-directions'), {
+          zoom: 10,
+          center: {lat: {{ core_dets.lat }}, lng: {{ core_dets.lng }}}
+        });
+
+        var latlngbounds = new google.maps.LatLngBounds();
+        latlngbounds.extend(start);
+        latlngbounds.extend(end);
+        map.fitBounds(latlngbounds);
+
+        directionsDisplay.setMap(map);
+
+        calculateAndDisplayRoute(directionsService, directionsDisplay, start, end);
+      }
+
+      function calculateAndDisplayRoute(directionsService, directionsDisplay, start, end) {
+        directionsService.route({
+          origin: start,
+          destination: end,
+          travelMode: 'WALKING'
+        }, function(response, status) {
+          if (status === 'OK') {
+            directionsDisplay.setDirections(response);
+          } else {
+            window.alert('Directions request failed due to ' + status);
+          }
+        });
+      }
+
+
+      function initMap() {
+        var pcode = {lat: {{ core_dets.lat }}, lng: {{ core_dets.lng }}};
+        var map = new google.maps.Map(document.getElementById('pcode-map'), {
+          zoom: 14,
+          center: pcode,
+          disableDefaultUI: true,
+          gestureHandling: 'none',
+          scrollwheel: false,
+          disableDoubleClickZoom: true,
+          zoomControl: false
+        });
+        var marker = new google.maps.Marker({
+          position: pcode,
+          animation: google.maps.Animation.DROP,
+          map: map,
+          title: "{{ core_dets.code }}"
+        });
+      // map legend etc
+        var iconBase = '../static/images/';
+              var icons = {
+                gp: {
+                  name: 'GP',
+                  icon: iconBase + 'medicine.png'
+                },
+                school: {
+                  name: 'Schools',
+                  icon: iconBase + 'university.png'
+                },
+                transport: {
+                  name: 'Transport',
+                  icon: iconBase + 'train.png'
+                }
+              };
+
+        var features = [
+          {
+            position: new google.maps.LatLng({{ nurserydata.lat }}, {{ nurserydata.lng }}),
+            type: 'school'
+          },
+          {
+            position: new google.maps.LatLng({{ primarydata.lat }}, {{ primarydata.lng }}),
+            type: 'school'
+          },
+          {
+            position: new google.maps.LatLng({{ secondarydata.lat }}, {{ secondarydata.lng }}),
+            type: 'school'
+          },
+          {
+            position: new google.maps.LatLng({{ gpdata.lat }}, {{ gpdata.lng }}),
+            type: 'gp'
+          },
+          {
+            position: new google.maps.LatLng({{ transport.lat }}, {{ transport.lng }}),
+            type: 'transport'
+          }
+        ];
+
+        var latlngbounds = new google.maps.LatLngBounds();
+        // Create markers.
+        var poi = [
+          {name: "{{ nurserydata.establishment_name }}"},
+          {name: "{{ primarydata.establishment_name }}"},
+          {name: "{{ secondarydata.establishment_name }}"},
+          {name: "GP: {{ gpdata.name }}"},
+          {name: "{{ transport.station_name }} station"}
+        ];
+
+        // Create markers.
+        features.forEach(function(feature,index) {
+          latlngbounds.extend(feature.position);
+          var marker = new google.maps.Marker({
+            position: feature.position,
+            icon: icons[feature.type].icon,
+            map: map,
+            title: poi[index].name
+          });
+        });
+
+
+        map.fitBounds(latlngbounds);
+
+
+        var legend = document.getElementById('map-legend');
+        for (var key in icons) {
+          var type = icons[key];
+          var name = type.name;
+          var icon = type.icon;
+          var div = document.createElement('div');
+          div.innerHTML = '<img src="' + icon + '"> ' + name;
+          legend.appendChild(div);
+        }
+        document.appendChild(legend);
+
+        map.controls[google.maps.ControlPosition.TOP_RIGHT].push(legend);
+
+      // end map legend
+      }
+    </script>
+    <!-- CHART JS -->
+    <script>
+    var ring_data1 = {{pop.working_pop}};
+    var ring_data2 = {{pop.tot_pop}};
+    var ringctx = document.getElementById("ringChart");
+    var donutChart = new Chart(ringctx, {
+      type: 'doughnut',
+      data: {
+        labels: ["Working population", "Total population"],
+        datasets: [{
+          backgroundColor: [
+            "#0000CD",
+            "#DCDCDC"
+          ],
+          borderColor: [
+            "#000080",
+            "#CBCBCB"
+          ],
+          data: [ring_data1,ring_data2],
+          borderWidth: [1, 1]
+        }]
+      },
+      options: {
+        cutoutPercentage: [70],
+        // rotation: [60],
+        // circumference: [ring_data]
+      }
+    });
+
+    var ctx = document.getElementById("myChart");
+    var myChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ["Children", "Adults", "Older people"],
+        datasets: [{
+          backgroundColor: [
+            "#2ecc71",
+            "#3498db",
+            "#95a5a6"
+          ],
+          data: [{{ pop.children_0_15 }}, {{ pop.gen_pop_16_59 }}, {{ pop.old_pop_60_plus }}]
+        }]
+      }
+    });
+
+    </script>
+    <script defer="defer">
+    var bar_ctx = document.getElementById("CrimeChart").getContext('2d');
+    var BarChart = new Chart(bar_ctx, {
+      type: 'bar',
+      data: {
+        labels: ["Theft", "ASBO", "Serious crime"],
+        datasets: [
+        {
+          label: 'Local',
+          data: [{{ crimedata.theft_tot }}, {{ crimedata.asb_tot }}, {{ crimedata.serious_tot }}],
+          backgroundColor: 'rgba(0, 204, 0, 0.2)',
+          borderColor: 'rgba(0, 204, 0,1)',
+          borderWidth: 1
+        },
+        {
+          label: 'Surrounding area',
+          // data: [{{ crimedata.theft_average }}, {{ crimedata.asb_average }}, {{ crimedata.serious_crime_average }}],
+          data: [{{ crimedata.theft_average }}, {{ crimedata.asb_average }}, {{ crimedata.serious_crime_average }}],
+          backgroundColor: 'rgba(54, 162, 235, 0.2)',
+          borderColor: 'rgba(54, 162, 235, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        scales: {
+            yAxes: [{
+              id:"y-axis-1",
+              position:'left',
+              type: 'linear',
+                ticks: {
+                  beginAtZero:true,
+                  callback: function(value) {if (value % 1 === 0) {return value;}}
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Number of incidents'
+                  }
+              }],
+            xAxes : [{
+              gridLines : {
+                    display : false
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Crime by type'
+                  }
+            }]
+        }
+
+      }
+    });
+    </script>
+    <script>
+    var options = {
+        scale: {
+            ticks: {
+                beginAtZero: true,
+                max: 10
+            }
+        }
+    };
+    new Chart(document.getElementById("deprivation-radar"), {
+        type: 'radar',
+        options: options,
+        data: {
+          labels: ["Income", "Employment", "Education", "Health", "Crime", "Barriers to services", "Environment"],
+          datasets: [
+            {
+              label: "Domains of deprivation",
+              fill: true,
+              backgroundColor: "rgba(179,181,198,0.2)",
+              borderColor: "#8e5ea2",
+              pointBorderColor: "#fff",
+              pointBackgroundColor: "rgb(247, 27, 229)",
+              data: [{{ deprivation.income_decile }},{{ deprivation.employment_decile }},{{ deprivation.education_decile }},{{ deprivation.health_decile }},
+              {{ deprivation.crime_decile }}, {{ deprivation.barriers_decile }}, {{ deprivation.environment_decile }}]
+            }
+          ]
+        }
+    });
+    </script>
+    <script>
+    var p_year = [];
+    var tot_avg = [];
+    var pcode_avg = [];
+    var outcode_avg = [];
+          {% for line in propertydata %}
+            p_year.push({{ line.year| int }});
+            tot_avg.push({{ line.total_avg }});
+            pcode_avg.push({{ line.postcode_avg | int}});
+            outcode_avg.push({{ line.outcode_avg}});
+          {% endfor %}
+    var line_ctx = document.getElementById("property-price-chart").getContext('2d');
+    var LineChart = new Chart(line_ctx, {
+      type: 'line',
+      data: {
+        labels: p_year.reverse(),
+        datasets: [{
+            data: tot_avg.reverse(),
+            label: "UK Average",
+            borderColor: "#3e95cd",
+            fill: false
+          }, {
+            data: pcode_avg.reverse(),
+            label: "Postcode Average",
+            borderColor: "#8e5ea2",
+            fill: false
+          }, {
+            data: outcode_avg.reverse(),
+            label: "Outcode Average",
+            borderColor: "#3cba9f",
+            fill: false
+          }
+        ]
+      },
+      options: {
+        title: {
+          display: true,
+          text: 'Property price values'
+        },
+        scales: {
+            yAxes: [{
+              id:"y-axis-1",
+              position:'left',
+              type: 'linear',
+                ticks: {
+                  beginAtZero:true
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Price in £'
+                  }
+              }],
+            xAxes : [{
+              gridLines : {
+                    display : false
+                },
+                scaleLabel: {
+                    display: true,
+                    labelString: 'Year'
+                  }
+            }]
+        }
+      }
+    });
+    </script>
+    <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCC_HU_ttPeHhDdpEbA4WUnaYAj_OSZ7YU&callback=drawmaps">
+    </script>
+  </body>
+</html>

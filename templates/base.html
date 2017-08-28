@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="MSc Thesis">
+    <meta name="author" content="Pierre de Wet">
+    <link rel="icon" href="../../favicon.ico">
+    <title>W1515130 Prototype</title>
+    <!-- Bootstrap core CSS -->
+    <link  rel='stylesheet' href="{{ url_for('static', filename='css/bootstrap.css') }}" />
+    <!-- Custom styles for this template -->
+    <link  rel='stylesheet' href="{{ url_for('static', filename='css/starter-template.css') }}" />
+    <link  rel='stylesheet' href="{{ url_for('static', filename='css/custom.styles.css') }}" />
+  </head>
+
+  <body style="background-color: #616161">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="{{ url_for('index') }}">W1515130 Prototype</a>
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+        <form class="navbar-form navbar-right" id="postcodelookup" action="{{ url_for('myhood') }}" method="post">
+          <input class="form-control mr-sm-0" type="text" placeholder="Search for postcode" aria-label="Search Postcode" id="postcode" name="postcode">
+          <button class="btn btn-outline-success my-sm-3" type="submit">Lookup</button>
+        </form>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
+  </nav>
+  <div class="container-fluid" id="mainbody">
+    <div class="row">
+      <!-- {% block side_bar %}{% endblock %} -->
+      <!-- <div class="col-md-9 col-md-offset-3 content" id="corebody"> -->
+      <!-- <div class="col-md-9 content" id="corebody"> -->
+      {% block core_body %}
+
+      {% endblock %}
+      </div>
+    </div>
+  </div>
+  <script src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+  <!-- <script src="{{ url_for('static', filename='js/custom.js') }}"></script> -->
+  <script src="{{ url_for('static', filename='js/Chart.js') }}"></script>
+  {% block local_scripts %}{% endblock %}
+  </body>
+</html>

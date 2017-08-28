@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+    {% block core_body %}
+<div class="container col-md-6 col-sm-offset-3">
+    <div class="stepwizard">
+        <div class="stepwizard-row setup-panel">
+            <div class="stepwizard-step col-xs-3">
+                <a href="#step-1" type="button" class="btn btn-success btn-circle">1</a>
+                <p><small>People</small></p>
+            </div>
+            <div class="stepwizard-step col-xs-3">
+                <a href="#step-2" type="button" class="btn btn-default btn-circle" disabled="disabled">2</a>
+                <p><small>Environment</small></p>
+            </div>
+            <div class="stepwizard-step col-xs-3">
+                <a href="#step-3" type="button" class="btn btn-default btn-circle" disabled="disabled">3</a>
+                <p><small>Schools</small></p>
+            </div>
+            <div class="stepwizard-step col-xs-3">
+                <a href="#step-4" type="button" class="btn btn-default btn-circle" disabled="disabled">4</a>
+                <p><small>Travel</small></p>
+            </div>
+        </div>
+    </div>
+
+    <form role="form" name="queryneighbourhood" method="post" action="{{ url_for('map') }}">
+        <div class="panel panel-primary setup-content" id="step-1">
+            <div class="panel-heading">
+                 <h3 class="panel-title">People</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                  <label for="crime">Crime level</label>
+                  <select class="form-control" id="crime" name="crime">
+                    <option value=10 selected>Not important</option>
+                    <option value=2>Lowest</option>
+                    <option value=3>Low</option>
+                    <option value=6>Average</option>
+                  </select>
+                </div>
+
+                <button class="btn btn-primary nextBtn pull-right" type="button">Next</button>
+            </div>
+        </div>
+
+        <div class="panel panel-primary setup-content" id="step-2">
+            <div class="panel-heading">
+                 <h3 class="panel-title">Environment</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                  <label for="doctor">A GP should be within...</label>
+                   <select class="form-control" id="doctor" name="doctor">
+                      <option value=1 selected>I don't mind</option>
+                      <option value=0.1>100 meters</option>
+                      <option value=0.25>250 meters</option>
+                      <option value=0.5>500 meters</option>
+                      <option value=0.75>750 meters</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="greenspace">Green spaces are...</label>
+                    <select class="form-control" id="greenspace" name="greenspace">
+                      <option value=10 selected>Not that important</option>
+                      <option value=25>Very important</option>
+                      <option value=20>Quite important</option>
+                      <option value=15>Somewhat important</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary nextBtn pull-right" type="button">Next</button>
+            </div>
+        </div>
+
+        <div class="panel panel-primary setup-content" id="step-3">
+            <div class="panel-heading">
+                 <h3 class="panel-title">School</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                  <label for="school">Schools should be within...</label>
+                  <select class="form-control" id="school" name="school">
+                      <option value=1 selected>I don't mind</option>
+                      <option value=0.1>100 meters</option>
+                      <option value=0.25>250 meters</option>
+                      <option value=0.5>500 meters</option>
+                      <option value=0.75>750 meters</option>
+                  </select>
+                </div>
+                <button class="btn btn-primary nextBtn pull-right" type="button">Next</button>
+            </div>
+        </div>
+
+        <div class="panel panel-primary setup-content" id="step-4">
+            <div class="panel-heading">
+                 <h3 class="panel-title">Travel</h3>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                <label for="school">A train station should be within...</label>
+                   <select class="form-control" id="transport" name="transport">
+                      <option value=1 selected>I don't mind</option>
+                      <option value=0.1>100 meters</option>
+                      <option value=0.25>250 meters</option>
+                      <option value=0.5>500 meters</option>
+                      <option value=0.75>750 meters</option>
+                  </select>
+                </div>
+                <button class="btn btn-success pull-right" type="submit">Search!</button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+   {% block local_scripts %}
+     {{ super() }}
+     <script>
+    $(document).ready(function () {
+
+        var navListItems = $('div.setup-panel div a'),
+            allWells = $('.setup-content'),
+            allNextBtn = $('.nextBtn');
+
+        allWells.hide();
+
+        navListItems.click(function (e) {
+            e.preventDefault();
+            var $target = $($(this).attr('href')),
+                $item = $(this);
+
+            if (!$item.hasClass('disabled')) {
+                navListItems.removeClass('btn-success').addClass('btn-default');
+                $item.addClass('btn-success');
+                allWells.hide();
+                $target.show();
+                $target.find('input:eq(0)').focus();
+            }
+        });
+
+        allNextBtn.click(function () {
+            var curStep = $(this).closest(".setup-content"),
+                curStepBtn = curStep.attr("id"),
+                nextStepWizard = $('div.setup-panel div a[href="#' + curStepBtn + '"]').parent().next().children("a"),
+                curInputs = curStep.find("input[type='text'],input[type='url']"),
+                isValid = true;
+
+            $(".form-group").removeClass("has-error");
+            for (var i = 0; i < curInputs.length; i++) {
+                if (!curInputs[i].validity.valid) {
+                    isValid = false;
+                    $(curInputs[i]).closest(".form-group").addClass("has-error");
+                }
+            }
+
+            if (isValid) nextStepWizard.removeAttr('disabled').trigger('click');
+        });
+
+        $('div.setup-panel div a.btn-success').trigger('click');
+    });
+     </script>
+    {% endblock %}
