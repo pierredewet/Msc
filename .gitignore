@@ -41,3 +41,6 @@ config.py
 env/
 venv/
 ENV/
+
+# viva notes
+Searches.md
