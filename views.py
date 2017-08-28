@@ -17,15 +17,7 @@ def map():
         lookup_sql = text(" SELECT "
                           " p.code, "
                           " p.lat, "
-                          " p.lng, "
-                          " CASE "
-                          " WHEN (imd_decile = 1) OR (imd_decile = 2) THEN 'red' "
-                          " WHEN (imd_decile = 3) or (imd_decile = 4) THEN 'orange' "
-                          " WHEN (imd_decile = 5) or (imd_decile = 6) THEN 'yellow' "
-                          " WHEN (imd_decile = 7) or (imd_decile = 8) THEN 'green' "
-                          " WHEN (imd_decile = 9) or (imd_decile = 10) THEN 'blue' "
-                          " ELSE 'black' "
-                          " END AS dep_colour "
+                          " p.lng "
                           " FROM pcode p "
                           " WHERE crime_lvl < :crime "
                           " AND ( "
@@ -45,7 +37,6 @@ def map():
             rp = session.execute(lookup_sql, {'crime': querydata['crime'], 'school': querydata['school'], 'gp': querydata['doctor'], 'transport': querydata['transport'], 'green': querydata['greenspace']})
             lookup_rp = rp.fetchall()
             postcodes = lookup_rp
-            # return redirect(url_for('index'))
         except NoResultFound:
             flash('No postcode matches found')
             return redirect(url_for('index'))
@@ -81,13 +72,11 @@ def myhood():
             population = session.query(PopulationByLsoa).filter_by(lsoa=core_details.lsoa).one()
         except NoResultFound:
             flash('No population records found for that search')
-            # return redirect(url_for('index'))
         avg_pop = session.query(func.avg(PopulationByLsoa.tot_pop).label('avg_pop')).scalar()
 
         # Crime data extract
         try:
             crime_data = session.query(CrimeStat).filter_by(lsoa=core_details.lsoa).first()
-            # crime_data = session.query(CrimeStat).filter_by(lsoa=core_details.lsoa).one()
         except NoResultFound:
             crime_data = 0
             flash('No crime records found for that search')
@@ -133,6 +122,7 @@ def myhood():
                       " LIMIT 1"
                       )
         avg_patients = session.query(func.avg(GpSurgery.tot_patients).label('avg_patients')).scalar()
+
         # Query for Stations near postcode
         stations_sql = ("SELECT "
                         "   ls.station_name,"
@@ -146,6 +136,7 @@ def myhood():
                         " LIMIT 1"
                         )
 
+        # Query Property prices
         property_sql = (" SELECT"
                         "    mapp.year AS year"
                         "   ,mapp.annual_avg AS total_avg"
@@ -170,6 +161,7 @@ def myhood():
                         " LIMIT 10"
                         )
 
+        # Query for local dentists
         dental_sql = (" SELECT  "
                       "  name,  "
                       "  addr2,  "
@@ -185,7 +177,6 @@ def myhood():
 
         # Get outcode and do property search
         out_code = core_details.code.split(" ")
-        # print("outcode: " + out_code[0])
         try:
             rp = session.execute(property_sql, {'postcode': core_details.code, 'outcode': out_code[0]})
             property_rp = rp.fetchall()
