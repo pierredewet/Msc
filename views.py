@@ -19,7 +19,7 @@ def map():
                           " p.lat, "
                           " p.lng "
                           " FROM pcode p "
-                          " WHERE crime_lvl < :crime "
+                          " WHERE crime_lvl >= :crime "
                           " AND ( "
                           " nearest_primary <= :school OR "
                           " nearest_nursery <= :school OR "
