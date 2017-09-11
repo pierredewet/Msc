@@ -49,6 +49,10 @@ def map():
 @app.route('/myhood/', methods=['GET', 'POST'])
 def myhood():
         postcode = request.form['postcode']
+        tempcode = postcode.upper().strip().replace(" ", "")
+        postcode = tempcode[0:-3] + " " + tempcode[-3:]
+        if len(postcode) > 9:
+	        return redirect(url_for('index'))
         try:
             core_details = session.query(Pcode).filter_by(code=postcode).one()
         except NoResultFound:
